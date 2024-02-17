@@ -1,0 +1,29 @@
+.pageContentContainer{
+    position: fixed;
+    bottom: 0vh;
+    width: 70%;
+    height: 85vh;
+    background-color: rgb(4, 4, 4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pageContentDiv{
+    width: 90%;
+    height: 90%;
+    background-color: rgb(255, 255, 255);
+}
+
+
+.commentSectionContainer{
+    position: fixed;
+    bottom: 0vh;
+    right: 0;
+    width: 30%;
+    height: 85vh;
+    background-color: rgb(128, 128, 128);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
