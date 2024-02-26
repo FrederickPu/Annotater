@@ -1,6 +1,6 @@
 import React from "react";
 import './Content.css';
-import PDFReader from "./PDFReader";
+import PDFReader from "./PDFReaderMarkdown";
 
 interface CanvasProps{
 
@@ -11,6 +11,7 @@ interface CanvasState{
 }
 
 class PageContent extends React.Component<CanvasProps, CanvasState> {
+    
     render(){
         return(
             <div className="pageContentContainer">
