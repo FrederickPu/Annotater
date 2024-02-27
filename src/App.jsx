@@ -23,13 +23,11 @@ import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import './App.css';
 import './ContextMenu.css';
 
-const ContextMenu = forwardRef(({ xPos, yPos }, ref) => {
+const ContextMenu = forwardRef(({ xPos, yPos, onComment }, ref) => {
   return (
     <div ref={ref} className="context-menu" style={{ top: yPos, left: xPos }}>
-      <ul>
-        <li>Comment</li>
-        <li>Respond</li>
-      </ul>
+      <button onClick={onComment}>Comment</button>
+      <button>Respond</button>
     </div>
   );
 });
@@ -38,6 +36,9 @@ const App = () => {
   const [contextMenuPos, setContextMenuPos] = useState({ xPos: 0, yPos: 0 });
   const [isContextMenuVisible, setContextMenuVisible] = useState(false);
   const contextMenuRef = useRef(null);
+
+  const [segments, setSegments] = useState([[10, 12, 'yellow'], [15, 18, 'red']]);
+  const [selection, setSelection] = useState({startPos: null, endPos:null})
 
   const handleContextMenu = (e) => {
     e.preventDefault();
@@ -61,7 +62,6 @@ const App = () => {
     }
   };
 
-  // Attach the event listener to the document
   useEffect(() => {
     document.addEventListener('click', handleOutsideClick);
     return () => {
@@ -76,9 +76,15 @@ const App = () => {
           ref={contextMenuRef}
           xPos={contextMenuPos.xPos}
           yPos={contextMenuPos.yPos}
+          onComment={() => setSegments(prev => [...prev, [selection.startPos, selection.endPos, "green"]])}
         />
       )}
-      <Highlight />
+      {/* [...prev, [selection.startPos, selection.endPos, "green"]] */}
+      <Highlight 
+        content={"Kevin is very smart because of his dedication to visualizing game theory."}
+        segments={segments}
+        onSelect={(start, end) => setSelection({startPos:start, endPos:end})}
+      />
     </div>
   );
 };
