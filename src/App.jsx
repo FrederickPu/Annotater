@@ -82,7 +82,7 @@ const App = () => {
           ref={contextMenuRef}
           xPos={contextMenuPos.xPos}
           yPos={contextMenuPos.yPos}
-          onComment={() => setSegments(prev => [...prev, [selection.startPos, selection.endPos, "green"]])}
+          onComment={() => setSegments(prev => [...prev, [selection.startPos, selection.endPos, green]])}
         />
       )}
       {/* [...prev, [selection.startPos, selection.endPos, "green"]] */}
@@ -91,6 +91,7 @@ const App = () => {
         segments={segments}
         onSelect={(start, end) => setSelection({startPos:start, endPos:end})}
       />
+      <h1>{JSON.stringify(selection)}</h1>
     </div>
   );
 };
