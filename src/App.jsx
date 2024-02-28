@@ -44,7 +44,7 @@ const App = () => {
 
 
   const [segments, setSegments] = useState([[10, 16, yellow], [15, 18, green], [14, 21, purple]]);
-  const [selection, setSelection] = useState({startPos: null, endPos:null})
+  const [selection, setSelection] = useState(null)
 
   const handleContextMenu = (e) => {
     e.preventDefault();
@@ -82,7 +82,7 @@ const App = () => {
           ref={contextMenuRef}
           xPos={contextMenuPos.xPos}
           yPos={contextMenuPos.yPos}
-          onComment={() => setSegments(prev => [...prev, [selection.startPos, selection.endPos, green]])}
+          onComment={() => selection && setSegments(prev => [...prev, [selection.startPos, selection.endPos, green]])}
         />
       )}
       {/* [...prev, [selection.startPos, selection.endPos, "green"]] */}
