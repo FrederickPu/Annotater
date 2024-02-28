@@ -69,7 +69,7 @@ const App = () => {
       setContextMenuVisible(false);
     }
 
-    if (selection && !highlightRef.current.contains(e.target)) {
+    if (selection && !highlightRef.current.contains(e.target) && !isContextMenuVisible) {
       setSelection(null);
     }
   };
