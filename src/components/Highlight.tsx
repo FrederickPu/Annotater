@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { TextSelection } from 'react-pdf-selection/components/TextSelection';
 
 interface Color {
@@ -7,13 +7,17 @@ interface Color {
     blue: number
 }
 
-// we assume that all segments line together back to back
-// eg: [0, 1, "green"], [2, 10, "white"], [11, 14, "green"]
-function HighlightDisjoint({content, segments, onSelect}) {
-
-  return (
-    <>
+interface HighlightProps {
+    content: string;
+    segments: Array<[number, number, Color]>;
+    onSelect: Function
+}
+const HighlightDisjoint =  React.forwardRef<HTMLDivElement, HighlightProps> (
+    ({content, segments, onSelect}, ref) => {
+    
+    return (
       <div
+        ref={ref}
         onMouseUp={(e: React.MouseEvent) => {
           let selectionEvent = window.getSelection();
           console.log(selectionEvent)
@@ -36,11 +40,12 @@ function HighlightDisjoint({content, segments, onSelect}) {
           ))
         }
       </div>
-    </>
-  )
-}
+    )
+  }
+)
 
-function Highlight({content, segments, onSelect}) {
+const Highlight=  React.forwardRef<HTMLDivElement, HighlightProps>(
+    ({content, segments, onSelect}, ref) => {
 
     function combineColors(set: Set<Color>) : Color {
         let out: Color = {red: 0, green: 0, blue: 0}
@@ -90,8 +95,8 @@ function Highlight({content, segments, onSelect}) {
     if (prevIndex <= content.length - 1)
         res.push([prevIndex, content.length - 1, combineColors(currentColorSet)]);
 
-    return <HighlightDisjoint content={content} segments={res} onSelect={onSelect}/>
+    return <HighlightDisjoint content={content} segments={res} onSelect={onSelect} ref={ref}/>
 
-}
+})
 
 export default Highlight;

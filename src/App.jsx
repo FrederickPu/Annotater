@@ -35,7 +35,9 @@ const ContextMenu = forwardRef(({ xPos, yPos, onComment }, ref) => {
 const App = () => {
   const [contextMenuPos, setContextMenuPos] = useState({ xPos: 0, yPos: 0 });
   const [isContextMenuVisible, setContextMenuVisible] = useState(false);
+
   const contextMenuRef = useRef(null);
+  const highlightRef = useRef(null);
 
   const white = {red:255, green:255, blue:255}
   const yellow = {red:255, green:255, blue:0}
@@ -66,6 +68,10 @@ const App = () => {
     if (contextMenuRef.current && !contextMenuRef.current.contains(e.target) && isContextMenuVisible) {
       setContextMenuVisible(false);
     }
+
+    if (selection && !highlightRef.current.contains(e.target)) {
+      setSelection(null);
+    }
   };
 
   useEffect(() => {
@@ -73,7 +79,8 @@ const App = () => {
     return () => {
       document.removeEventListener('click', handleOutsideClick);
     };
-  }, [isContextMenuVisible]);
+  }, [isContextMenuVisible, selection]);
+
 
   return (
     <div className="app" onContextMenu={handleContextMenu}>
@@ -90,6 +97,7 @@ const App = () => {
         content={"Kevin is very smart because of his dedication to visualizing game theory."}
         segments={segments}
         onSelect={(start, end) => setSelection({startPos:start, endPos:end})}
+        ref={highlightRef}
       />
       <h1>{JSON.stringify(selection)}</h1>
     </div>
