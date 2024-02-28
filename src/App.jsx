@@ -40,9 +40,10 @@ const App = () => {
   const white = {red:255, green:255, blue:255}
   const yellow = {red:255, green:255, blue:0}
   const green = {red:0, green:255, blue: 0}
+  const purple = {red: 128, green: 0, blue: 128}
 
 
-  const [segments, setSegments] = useState([[0, 9, white], [10, 12, yellow], [13, 14, white], [15, 18, green], [19, 72, white]]);
+  const [segments, setSegments] = useState([[10, 16, yellow], [15, 18, green], [14, 21, purple]]);
   const [selection, setSelection] = useState({startPos: null, endPos:null})
 
   const handleContextMenu = (e) => {
