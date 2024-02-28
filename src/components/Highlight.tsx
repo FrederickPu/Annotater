@@ -7,10 +7,8 @@ interface Color {
     blue: number
 }
 
-// TODO:: make the selection indexing actually work
 // we assume that all segments line together back to back
 // eg: [0, 1, "green"], [2, 10, "white"], [11, 14, "green"]
-// future name for component: HighlightDisjoint
 function HighlightDisjoint({content, segments, onSelect}) {
 
   return (
