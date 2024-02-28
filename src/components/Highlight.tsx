@@ -24,7 +24,7 @@ function HighlightDisjoint({content, segments, onSelect}) {
           // ------seg_start-------position--------seg_end
           let startPos = segments[parseInt(selectionEvent.anchorNode.parentElement.id)][0] + selectionEvent.anchorOffset
           let endPos = segments[parseInt(selectionEvent.focusNode.parentElement.id)][0] + selectionEvent.focusOffset
-          onSelect(startPos, endPos)
+          onSelect(Math.min(startPos, endPos), Math.max(startPos, endPos) - 1)
           console.log(startPos, endPos)
         }}
       >
