@@ -1,10 +1,10 @@
 import React from 'react';
 import { TextSelection } from 'react-pdf-selection/components/TextSelection';
 
-
-interface AppState {
-  content: string,
-  segments: [[number, number, string]] // disjoint segments (start, end, color)
+interface Color {
+    red: number;
+    green: number;
+    blue: number
 }
 
 // TODO:: make the selection indexing actually work
@@ -33,7 +33,7 @@ function Highlight({content, segments, onSelect}) {
         {
           segments.map((segment, i) => (
             <React.Fragment key={i}>
-              <mark key={i} id={i} style={{ backgroundColor: segment[2] }} onClick={() => console.log(segment[2])}>{content.slice(segment[0], segment[1] + 1)}</mark>
+              <mark key={i} id={i} style={{ backgroundColor: `rgb(${segment[2].red}, ${segment[2].green}, ${segment[2].blue})` }} onClick={() => console.log(segment[2])}>{content.slice(segment[0], segment[1] + 1)}</mark>
             </React.Fragment>
           ))
         }

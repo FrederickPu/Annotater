@@ -37,7 +37,12 @@ const App = () => {
   const [isContextMenuVisible, setContextMenuVisible] = useState(false);
   const contextMenuRef = useRef(null);
 
-  const [segments, setSegments] = useState([[0, 9, "white"], [10, 12, 'yellow'], [13, 14, "white"], [15, 18, 'green'], [19, 72, "white"]]);
+  const white = {red:255, green:255, blue:255}
+  const yellow = {red:255, green:255, blue:0}
+  const green = {red:0, green:255, blue: 0}
+
+
+  const [segments, setSegments] = useState([[0, 9, white], [10, 12, yellow], [13, 14, white], [15, 18, green], [19, 72, white]]);
   const [selection, setSelection] = useState({startPos: null, endPos:null})
 
   const handleContextMenu = (e) => {
