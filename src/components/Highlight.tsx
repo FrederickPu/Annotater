@@ -49,14 +49,19 @@ const Highlight=  React.forwardRef<HTMLDivElement, HighlightProps>(
 
     function combineColors(set: Set<Color>) : Color {
         let out: Color = {red: 0, green: 0, blue: 0}
+        let used = new Set();
         for (let color of set.keys()) {
-            out.red += color.red
-            out.green += color.green
-            out.blue += color.blue
+          if(used.has(JSON.stringify(color))){
+            continue;
+          }
+          out.red += color.red
+          out.green += color.green
+          out.blue += color.blue
+          used.add(JSON.stringify(color));
         }
         if (set.size == 0)
             return {red: 255, green: 255, blue:255}
-        return {red: out.red / set.size, green: out.green / set.size, blue: out.blue / set.size}
+        return {red: out.red / used.size, green: out.green / used.size, blue: out.blue / used.size}
     }
 
     let iterate: Array<[number, Color, Boolean]> = [];
