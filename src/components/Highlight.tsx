@@ -20,16 +20,16 @@ const HighlightDisjoint =  React.forwardRef<HTMLDivElement, HighlightProps> (
         ref={ref}
         onMouseUp={(e: React.MouseEvent) => {
           let selectionEvent = window.getSelection();
-          console.log(selectionEvent)
-          console.log(selectionEvent?.anchorNode?.parentElement as HTMLElement)
-          console.log(selectionEvent?.focusNode?.parentElement as HTMLElement)
+          //console.log(selectionEvent)
+          //console.log(selectionEvent?.anchorNode?.parentElement as HTMLElement)
+          //console.log(selectionEvent?.focusNode?.parentElement as HTMLElement)
           // anchorNode: startNode
           // focusNode: endNode
           // ------seg_start-------position--------seg_end
           let startPos = segments[parseInt(selectionEvent.anchorNode.parentElement.id)][0] + selectionEvent.anchorOffset
           let endPos = segments[parseInt(selectionEvent.focusNode.parentElement.id)][0] + selectionEvent.focusOffset
           onSelect(Math.min(startPos, endPos), Math.max(startPos, endPos) - 1)
-          console.log(startPos, endPos)
+          //console.log(startPos, endPos)
         }}
       >
         {
@@ -61,35 +61,54 @@ const Highlight=  React.forwardRef<HTMLDivElement, HighlightProps>(
 
     let iterate: Array<[number, Color, Boolean]> = [];
     for (let i of segments) {
-        iterate.push([i[0], i[2], true]);
-        iterate.push([i[1], i[2], false]);
+      iterate.push([i[0], i[2], true]);
+      iterate.push([i[1] + 1, i[2], false]);
     }
 
     iterate.sort((a, b) => a[0] - b[0]);
 
-    let res = [];
-    let currentColorSet = new Set();
+    let mapIterate = new Map();
+    let iterateIndex: number[] = [];
+
+    for(let i of iterate){
+        if (mapIterate.has(i[0])){
+          let newColor = mapIterate.get(i[0]).color;
+          newColor.push(i[1]);
+          let newIsStart = mapIterate.get(i[0]).isStart;
+          newIsStart.push(i[2]);
+          mapIterate.set(i[0], {
+            color: newColor,
+            isStart: newIsStart
+          });
+        }else{
+          iterateIndex.push(i[0]);
+          mapIterate.set(i[0], {
+            color: [i[1]],
+            isStart: [i[2]]
+          });
+        }
+    }
+
+    let res: (number | Color)[][] = [];
+    let currentColorSet: Set<Color> = new Set();
     let prevIndex = 0;
 
-    for (let i of iterate) {
-        console.log(Array.from(currentColorSet.keys()))
 
-        if (i[2]) {
-            if (prevIndex === i[0])
-                continue;
-            res.push([prevIndex, i[0] - 1, combineColors(currentColorSet)]);
-            prevIndex = i[0];
-        } else {
-            if (prevIndex === i[0] + 1)
-                continue;
-            res.push([prevIndex, i[0], combineColors(currentColorSet)]);
-            prevIndex = i[0] + 1;
+    for (let i of iterateIndex){
+      let curr = mapIterate.get(i);
+      res.push([prevIndex, i - 1, combineColors(currentColorSet)]);
+      prevIndex = i;
+      for(let j = 0;j < curr.isStart.length;j++){
+        if(!curr.isStart[j]){
+          currentColorSet.delete(curr.color[j]);
         }
+      }
 
-        if (i[2])
-            currentColorSet.add(i[1]);
-        else
-            currentColorSet.delete(i[1])
+      for(let j = 0;j < curr.isStart.length;j++){
+          if(curr.isStart[j]){
+            currentColorSet.add(curr.color[j]);
+          }
+      }
     }
 
     if (prevIndex <= content.length - 1)

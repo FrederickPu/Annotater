@@ -21,7 +21,7 @@ class PDFReader extends React.Component {
 
     onMouseUp = (e) => {
         let selectionEvent = window.getSelection();
-        console.log(selectionEvent)
+        //console.log(selectionEvent)
     }
 
     render(){
