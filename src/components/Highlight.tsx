@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { TextSelection } from 'react-pdf-selection/components/TextSelection';
 
 interface Color {
     red: number;
