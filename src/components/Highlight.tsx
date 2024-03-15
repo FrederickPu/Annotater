@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 
-interface Color {
+export interface Color {
     red: number;
     green: number;
     blue: number
@@ -9,10 +9,12 @@ interface Color {
 interface HighlightProps {
     content: string;
     segments: Array<[number, number, Color]>;
-    onSelect: Function
+    onSelect: Function;
+    onSegmentClick: (number) => void;
 }
+
 const HighlightDisjoint =  React.forwardRef<HTMLDivElement, HighlightProps> (
-    ({content, segments, onSelect}, ref) => {
+    ({content, segments, onSelect, onSegmentClick}, ref) => {
     
     return (
       <div
@@ -34,7 +36,7 @@ const HighlightDisjoint =  React.forwardRef<HTMLDivElement, HighlightProps> (
         {
           segments.map((segment, i) => (
             <React.Fragment key={i}>
-              <mark key={i} id={i} style={{ backgroundColor: `rgb(${segment[2].red}, ${segment[2].green}, ${segment[2].blue})` }} onClick={() => console.log(segment[2])}>{content.slice(segment[0], segment[1] + 1)}</mark>
+              <mark key={i} id={i} style={{ backgroundColor: `rgb(${segment[2].red}, ${segment[2].green}, ${segment[2].blue})` }} onClick={() => onSegmentClick(i)}>{content.slice(segment[0], segment[1] + 1)}</mark>
             </React.Fragment>
           ))
         }
@@ -44,7 +46,9 @@ const HighlightDisjoint =  React.forwardRef<HTMLDivElement, HighlightProps> (
 )
 
 const Highlight=  React.forwardRef<HTMLDivElement, HighlightProps>(
-    ({content, segments, onSelect}, ref) => {
+    ({content, segments, onSegmentClick, onSelect}, ref) => {
+
+    const nsegments: [number, number, Color, number] = segments.map(([start, end, color], index) => [start, end, color, index])
 
     function combineColors(set: Set<Color>) : Color {
         let out: Color = {red: 0, green: 0, blue: 0}
@@ -63,62 +67,71 @@ const Highlight=  React.forwardRef<HTMLDivElement, HighlightProps>(
         return {red: out.red / used.size, green: out.green / used.size, blue: out.blue / used.size}
     }
 
-    let iterate: Array<[number, Color, Boolean]> = [];
-    for (let i of segments) {
-      iterate.push([i[0], i[2], true]);
-      iterate.push([i[1] + 1, i[2], false]);
+    let iterate: Array<[number, Color, Boolean, number]> = [];
+    for (let i of nsegments) {
+      iterate.push([i[0], i[2], true, i[3]]);
+      iterate.push([i[1] + 1, i[2], false, i[3]]);
     }
 
     iterate.sort((a, b) => a[0] - b[0]);
 
-    let mapIterate = new Map();
+    let mapIterate : Map<number, {colors:Color[], isStart:Boolean[], segIndex:number[]}> = new Map();
     let iterateIndex: number[] = [];
 
     for(let i of iterate){
         if (mapIterate.has(i[0])){
-          let newColor = mapIterate.get(i[0]).color;
-          newColor.push(i[1]);
+          let newColors = mapIterate.get(i[0]).colors;
+          newColors.push(i[1]);
+
           let newIsStart = mapIterate.get(i[0]).isStart;
           newIsStart.push(i[2]);
+
+          let newSegIndex = mapIterate.get(i[0]).segIndex;
+          newSegIndex.push(i[3])
           mapIterate.set(i[0], {
-            color: newColor,
-            isStart: newIsStart
+            colors: newColors,
+            isStart: newIsStart,
+            segIndex: newSegIndex
           });
         }else{
           iterateIndex.push(i[0]);
           mapIterate.set(i[0], {
-            color: [i[1]],
-            isStart: [i[2]]
+            colors: [i[1]],
+            isStart: [i[2]],
+            segIndex: [i[3]]
           });
         }
     }
 
-    let res: (number | Color)[][] = [];
+    let res: [number, number, Color, number | null][] = [];
     let currentColorSet: Set<Color> = new Set();
+    let currentSegIndexSet: Set<number> = new Set();
     let prevIndex = 0;
 
 
     for (let i of iterateIndex){
       let curr = mapIterate.get(i);
-      res.push([prevIndex, i - 1, combineColors(currentColorSet)]);
+      res.push([prevIndex, i - 1, combineColors(currentColorSet), currentSegIndexSet.values().next().value]);
       prevIndex = i;
       for(let j = 0;j < curr.isStart.length;j++){
         if(!curr.isStart[j]){
-          currentColorSet.delete(curr.color[j]);
+          currentColorSet.delete(curr.colors[j]);
+          currentSegIndexSet.delete(curr.segIndex[j]);
         }
       }
 
       for(let j = 0;j < curr.isStart.length;j++){
           if(curr.isStart[j]){
-            currentColorSet.add(curr.color[j]);
+            currentColorSet.add(curr.colors[j]);
+            currentSegIndexSet.add(curr.segIndex[j]);
           }
       }
     }
 
     if (prevIndex <= content.length - 1)
-        res.push([prevIndex, content.length - 1, combineColors(currentColorSet)]);
+        res.push([prevIndex, content.length - 1, combineColors(currentColorSet), currentSegIndexSet.values().next().value]);
 
-    return <HighlightDisjoint content={content} segments={res} onSelect={onSelect} ref={ref}/>
+    return <HighlightDisjoint content={content} segments={res} onSegmentClick={(index) => onSegmentClick(res[index][3])} onSelect={onSelect} ref={ref}/>
 
 })
 
