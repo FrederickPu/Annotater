@@ -88,7 +88,7 @@ const DocumentHighlight = ({content, comments, colorMap, onCommentClick, onComme
         <Highlight 
           content={content}
           segments={comments.map(({userid, commentid, seg} : MainComment) => [seg[0], seg[1], colorMap.get(userid)])}
-          onSegmentClick={(index) => onCommentClick(comments[index].userid, comments[index].commentid)}
+          onSegmentClick={(index) => (index !== undefined) && onCommentClick(comments[index].userid, comments[index].commentid)}
           onSelect={(start, end) => setSelection({startPos:start, endPos:end})}
           ref={highlightRef}
         />

@@ -27,10 +27,11 @@ const HighlightDisjoint =  React.forwardRef<HTMLDivElement, HighlightProps> (
           // anchorNode: startNode
           // focusNode: endNode
           // ------seg_start-------position--------seg_end
-          let startPos = segments[parseInt(selectionEvent.anchorNode.parentElement.id)][0] + selectionEvent.anchorOffset
-          let endPos = segments[parseInt(selectionEvent.focusNode.parentElement.id)][0] + selectionEvent.focusOffset
-          onSelect(Math.min(startPos, endPos), Math.max(startPos, endPos) - 1)
-          //console.log(startPos, endPos)
+          if (Number.isInteger(selectionEvent.anchorNode.parentElement?.id) && Number.isInteger(selectionEvent.focusNode.parentElement?.id)){
+            let startPos = segments[parseInt(selectionEvent.anchorNode.parentElement.id)][0] + selectionEvent.anchorOffset
+            let endPos = segments[parseInt(selectionEvent.focusNode.parentElement.id)][0] + selectionEvent.focusOffset
+            onSelect(Math.min(startPos, endPos), Math.max(startPos, endPos) - 1)
+          }
         }}
       >
         {
