@@ -27,11 +27,10 @@ const HighlightDisjoint =  React.forwardRef<HTMLDivElement, HighlightProps> (
           // anchorNode: startNode
           // focusNode: endNode
           // ------seg_start-------position--------seg_end
-          if (Number.isInteger(selectionEvent.anchorNode.parentElement?.id) && Number.isInteger(selectionEvent.focusNode.parentElement?.id)){
-            let startPos = segments[parseInt(selectionEvent.anchorNode.parentElement.id)][0] + selectionEvent.anchorOffset
-            let endPos = segments[parseInt(selectionEvent.focusNode.parentElement.id)][0] + selectionEvent.focusOffset
-            onSelect(Math.min(startPos, endPos), Math.max(startPos, endPos) - 1)
-          }
+          let startPos = segments[parseInt(selectionEvent.anchorNode.parentElement.id)][0] + selectionEvent.anchorOffset
+          let endPos = segments[parseInt(selectionEvent.focusNode.parentElement.id)][0] + selectionEvent.focusOffset
+          onSelect(Math.min(startPos, endPos), Math.max(startPos, endPos) - 1)
+  
         }}
       >
         {
@@ -51,21 +50,30 @@ const Highlight=  React.forwardRef<HTMLDivElement, HighlightProps>(
 
     const nsegments: [number, number, Color, number] = segments.map(([start, end, color], index) => [start, end, color, index])
 
-    function combineColors(set: Set<Color>) : Color {
-        let out: Color = {red: 0, green: 0, blue: 0}
-        let used = new Set();
-        for (let color of set.keys()) {
-          if(used.has(JSON.stringify(color))){
-            continue;
+    function blend(background : Color, foreground: Color, opacity: number){
+      background.red = background.red * (1 - opacity) + foreground.red * opacity
+      background.green = background.green * (1 - opacity) + foreground.green * opacity
+      background.blue = background.blue * (1 - opacity) + foreground.blue * opacity
+    }
+    function combineColors(mset: Map<string, number>) : Color {
+        let out: Color = {red: 255, green: 255, blue: 255}
+        let count = 0
+        const opacity = .3
+        for (let scolor of mset.keys()) {
+          let color:Color = JSON.parse(scolor)
+          let weight:number = mset.get(scolor)
+
+          if (weight == 0)
+            continue
+          count += 1
+
+          for (let i = 0; i < weight; i++){
+            blend(out, color, opacity)
           }
-          out.red += color.red
-          out.green += color.green
-          out.blue += color.blue
-          used.add(JSON.stringify(color));
         }
-        if (set.size == 0)
+        if (mset.size == 0 || count == 0)
             return {red: 255, green: 255, blue:255}
-        return {red: out.red / used.size, green: out.green / used.size, blue: out.blue / used.size}
+        return out
     }
 
     let iterate: Array<[number, Color, Boolean, number]> = [];
@@ -105,32 +113,32 @@ const Highlight=  React.forwardRef<HTMLDivElement, HighlightProps>(
     }
 
     let res: [number, number, Color, number | null][] = [];
-    let currentColorSet: Set<Color> = new Set();
+    let currentColorMultiSet: Map<string, number> = new Map();
     let currentSegIndexSet: Set<number> = new Set();
     let prevIndex = 0;
 
 
     for (let i of iterateIndex){
       let curr = mapIterate.get(i);
-      res.push([prevIndex, i - 1, combineColors(currentColorSet), currentSegIndexSet.values().next().value]);
+      res.push([prevIndex, i - 1, combineColors(currentColorMultiSet), currentSegIndexSet.values().next().value]);
       prevIndex = i;
       for(let j = 0;j < curr.isStart.length;j++){
         if(!curr.isStart[j]){
-          currentColorSet.delete(curr.colors[j]);
+          currentColorMultiSet.set(JSON.stringify(curr.colors[j]), (currentColorMultiSet.get(JSON.stringify(curr.colors[j])) || 0) - 1);
           currentSegIndexSet.delete(curr.segIndex[j]);
         }
       }
 
       for(let j = 0;j < curr.isStart.length;j++){
           if(curr.isStart[j]){
-            currentColorSet.add(curr.colors[j]);
+            currentColorMultiSet.set(JSON.stringify(curr.colors[j]), (currentColorMultiSet.get(JSON.stringify(curr.colors[j])) || 0) + 1);
             currentSegIndexSet.add(curr.segIndex[j]);
           }
       }
     }
 
     if (prevIndex <= content.length - 1)
-        res.push([prevIndex, content.length - 1, combineColors(currentColorSet), currentSegIndexSet.values().next().value]);
+        res.push([prevIndex, content.length - 1, combineColors(currentColorMultiSet), currentSegIndexSet.values().next().value]);
 
     return <HighlightDisjoint content={content} segments={res} onSegmentClick={(index) => onSegmentClick(res[index][3])} onSelect={onSelect} ref={ref}/>
 
