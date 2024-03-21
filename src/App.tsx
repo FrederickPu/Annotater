@@ -42,7 +42,8 @@ const App = () => {
 
   const users: Array<User> = [{userid : 1, color:green}, {userid: 2, color:yellow}, {userid: 3, color: purple}]
   const id = 1
-  const [comments, setComments] = useState([{userid : 1, commentid: 1, seg:[15, 18]}, {userid:2, commentid: 2, seg:[10, 16]}])
+  const [comments, setComments] = useState([{"userid":1,"commentid":0,"seg":[15,18]},{"userid":2,"commentid":1,"seg":[10,16]}])
+  const [commentsContent, setCommentsContent] = useState([])
   
   const [segments, setSegments] = useState([[10, 16, yellow], [15, 18, green], [14, 21, purple], [16, 44, green]]);
   console.log(segments)
@@ -52,15 +53,23 @@ const App = () => {
   colorMap.set(2, yellow)
   colorMap.set(3, purple)
 
+  const [commentContent, setCommentContent] = useState("")
+
   return (
     <>
     <DocumentHighlight 
       content={"Kevin is very smart because of his dedication to visualizing game theory."} 
       comments={comments}
       colorMap={colorMap}
-      onCommentClick={(userid, commentid) => console.log(`userid:${userid} commentid:${commentid}`)}
-      onComment={(start, end) => {console.log(start, end); setSegments(prev => [...prev, [start, end, green]])}}
+      onCommentClick={(userid, commentid) => {console.log(`userid:${userid} commentid:${commentid}`); alert("asldaklj")}}
+      onComment={(start, end) => {setComments((prev) => [...prev, {userid : 1, commentid : prev.length, seg:[start, end]}])}}
       />
+      <h1>{JSON.stringify(comments)}</h1>
+      <h1>{JSON.stringify(commentsContent)}</h1>
+      <textarea
+        value={commentContent}
+        onChange={e => setCommentContent(e.target.value)}
+    />
     </>
   )
 };
