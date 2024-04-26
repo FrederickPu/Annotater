@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState, forwardRef} from 'react'
 import Highlight from "./Highlight";
+import Comment from "./Comment.tsx"
 
 import './ContextMenu.css';
 
