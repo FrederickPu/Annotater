@@ -60,10 +60,12 @@ const DocumentHighlight = ({content, comments, colorMap, onCommentClick, onComme
     };
   
     const handleOutsideClick = (e) => {
+      // if the mouse clicks outside the context menu, close the context menu
       if (contextMenuRef.current && !contextMenuRef.current.contains(e.target) && isContextMenuVisible) {
         setContextMenuVisible(false);
       }
-  
+
+      // if the mouse clicks outside of the selection area reset the selection to null
       if (selection && !highlightRef.current.contains(e.target) && !isContextMenuVisible) {
         setSelection(null);
       }
