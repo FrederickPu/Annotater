@@ -43,7 +43,7 @@ const App = () => {
   const users: Array<User> = [{userid : 1, color:green}, {userid: 2, color:yellow}, {userid: 3, color: purple}]
   const id = 1
   const [comments, setComments] = useState([{"userid":1,"commentid":0,"seg":[15,18]},{"userid":2,"commentid":1,"seg":[10,16]}])
-  const [commentsContent, setCommentsContent] = useState([])
+  const [commentsContent, setCommentsContent] = useState([{"commentid":0,content:"please"},{"commentid":1,content:"stop"}])
   
   const [segments, setSegments] = useState([[10, 16, yellow], [15, 18, green], [14, 21, purple], [16, 44, green]]);
   console.log(segments)
@@ -61,8 +61,8 @@ const App = () => {
       content={"Kevin is very smart because of his dedication to visualizing game theory."} 
       comments={comments}
       colorMap={colorMap}
-      onCommentClick={(userid, commentid) => {console.log(`userid:${userid} commentid:${commentid}`); alert("asldaklj")}}
-      onComment={(start, end) => {setComments((prev) => [...prev, {userid : 1, commentid : prev.length, seg:[start, end]}])}}
+      onCommentClick={(userid, commentid) => {alert(`userid:${userid} commentid:${commentid} content:${commentsContent[commentid].content}`)}}
+      onComment={(start, end) => {setCommentsContent(prev => [...prev, {commentid: prev.length, content:prompt("message")}]);setComments((prev) => [...prev, {userid : 1, commentid : prev.length, seg:[start, end]}])}}
       />
       <h1>{JSON.stringify(comments)}</h1>
       <h1>{JSON.stringify(commentsContent)}</h1>

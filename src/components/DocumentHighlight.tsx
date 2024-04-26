@@ -82,7 +82,7 @@ const DocumentHighlight = ({content, comments, colorMap, onCommentClick, onComme
             ref={contextMenuRef}
             xPos={contextMenuPos.xPos}
             yPos={contextMenuPos.yPos}
-            onComment={() => selection && onComment(selection.startPos, selection.endPos)}
+            onComment={() => {setContextMenuVisible(false); selection && onComment(selection.startPos, selection.endPos)}}
           />
         )}
         <Highlight 
