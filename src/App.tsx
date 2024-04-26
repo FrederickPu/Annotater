@@ -64,7 +64,7 @@ const App = () => {
       onComment={(start, end) => setComments((prev) => [...prev, {userid : 1, commentid : prev.length, seg:[start, end], content:prompt("message")}])}
       onOutsideClick={() => setSelectedComment(null)}
       />
-      {selectedComment && <CommentElement comment={selectedComment}/>}
+      {selectedComment && <CommentElement comment={selectedComment} colorMap={colorMap}/>}
       <h1>{JSON.stringify(comments)}</h1>
     </>
   )

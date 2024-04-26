@@ -1,0 +1,12 @@
+.comment {
+    display : flex;
+}
+
+.bar {
+    width : 5px;
+    margin-right: 10px;
+}
+
+.comment-content {
+    margin-left: 20px;
+}

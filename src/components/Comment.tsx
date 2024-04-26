@@ -1,4 +1,5 @@
 import React from "react";
+import './Comment.css'
 
 export interface Comment {
     commentid: number;
@@ -6,15 +7,25 @@ export interface Comment {
     content: string;
     seg: [number, number];
 }
-interface CommentProps {
-    comment: Comment
+
+interface Color {
+    red: number;
+    green:number;
+    blue: number
 }
-export function CommentElement({comment} : CommentProps){
+interface CommentProps {
+    comment: Comment;
+    colorMap: Map<number, Color>
+}
+export function CommentElement({comment, colorMap} : CommentProps){
     return (
-    <div>
-        <h1>Comment: </h1>
-        <p>{comment.commentid}</p>
-        <p>{comment.content}</p>
-    </div>
+        <div className="comment">
+            <div className="bar" style={{backgroundColor: `rgb(${colorMap.get(comment.userid).red}, ${colorMap.get(comment.userid).green}, ${colorMap.get(comment.userid).blue})`}}></div>
+            <div>
+            <h1>User #{comment.userid}</h1>
+            <p>Responded to: {JSON.stringify(comment.seg)} with:</p>
+            <p className="comment-content">"{comment.content}"</p>
+            </div>
+        </div>
     )
 }
