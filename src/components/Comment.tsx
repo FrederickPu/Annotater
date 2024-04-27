@@ -15,15 +15,16 @@ interface Color {
 }
 interface CommentProps {
     comment: Comment;
-    colorMap: Map<number, Color>
+    colorMap: Map<number, Color>;
+    content: string // content of the whole paper
 }
-export function CommentElement({comment, colorMap} : CommentProps){
+export function CommentElement({comment, colorMap, content} : CommentProps){
     return (
         <div className="comment">
             <div className="bar" style={{backgroundColor: `rgb(${colorMap.get(comment.userid).red}, ${colorMap.get(comment.userid).green}, ${colorMap.get(comment.userid).blue})`}}></div>
             <div>
             <h1>User #{comment.userid}</h1>
-            <p>Responded to: {JSON.stringify(comment.seg)} with:</p>
+            <p>Responded to: "<mark style={{backgroundColor:`rgb(${colorMap.get(comment.userid).red}, ${colorMap.get(comment.userid).green}, ${colorMap.get(comment.userid).blue})`}}>{content.slice(comment.seg[0], comment.seg[1] + 1)}</mark>" with:</p>
             <p className="comment-content">"{comment.content}"</p>
             </div>
         </div>
