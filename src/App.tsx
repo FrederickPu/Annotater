@@ -38,7 +38,7 @@ const App = () => {
 
   const users: Array<User> = [{userid : 1, color:green}, {userid: 2, color:yellow}, {userid: 3, color: purple}]
 
-  const currUserid = 1
+  const [currUserid, setCurrUserid] = useState<number>(1);
   const [comments, setComments] = useState<Array<Comment>>([{userid:1, commentid:0,seg:[15,18], content:"please"},{userid:2,commentid:1,seg:[10,16], content:"stop"}])
   //const [commentsContent, setCommentsContent] = useState([{"commentid":0,content:"please"},{"commentid":1,content:"stop"}])
   
@@ -61,10 +61,14 @@ const App = () => {
       comments={comments.map((x : Comment) => ({commentid : x.commentid, userid : x.userid, seg : x.seg}))}
       colorMap={colorMap}
       onCommentClick={(userid, commentid) => {setSelectedComment(comments[commentid])}}
-      onComment={(start, end) => setComments((prev) => [...prev, {userid : 1, commentid : prev.length, seg:[start, end], content:prompt("message")}])}
+      onComment={(start, end) => setComments((prev) => [...prev, {userid : currUserid, commentid : prev.length, seg:[start, end], content:prompt("message")}])}
       onOutsideClick={() => setSelectedComment(null)}
       />
-      {selectedComment && <CommentElement comment={selectedComment} colorMap={colorMap}/>}
+      {selectedComment && <CommentElement comment={selectedComment} colorMap={colorMap} content="Kevin is very smart because of his dedication to visualizing game theory."/>}
+      <select value={`${currUserid}`} onChange={(event) => setCurrUserid(parseInt(event.target.value))}>
+        <option value="1">User #1</option>
+        <option value="2">User #2</option>
+      </select>
       <h1>{JSON.stringify(comments)}</h1>
     </>
   )
