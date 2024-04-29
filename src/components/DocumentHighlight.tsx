@@ -32,9 +32,10 @@ interface DocumentHighlightProp {
   onCommentClick: (userid: number, commentid: number) => void
   onComment: (start, end) => void
   onOutsideClick: () => void
+  highlightedIndex: number
 }
 
-const DocumentHighlight = ({content, comments, colorMap, onCommentClick, onComment, onOutsideClick} : DocumentHighlightProp) => {
+const DocumentHighlight = ({content, comments, colorMap, onCommentClick, onComment, onOutsideClick, highlightedIndex} : DocumentHighlightProp) => {
     const [contextMenuPos, setContextMenuPos] = useState({ xPos: 0, yPos: 0 });
     const [isContextMenuVisible, setContextMenuVisible] = useState(false);
   
@@ -91,7 +92,7 @@ const DocumentHighlight = ({content, comments, colorMap, onCommentClick, onComme
         )}
         <Highlight 
           content={content}
-          segments={comments.map(({userid, commentid, seg} : MainComment) => [seg[0], seg[1], colorMap.get(userid)])}
+          segments={comments.map(({userid, commentid, seg} : MainComment, index) => [seg[0], seg[1], index === highlightedIndex ? {red : 0 + colorMap.get(userid).red * 2 / 3, green : 0 + colorMap.get(userid).green * 2 / 3, blue: colorMap.get(userid).blue * 2 / 3} : colorMap.get(userid)])}
           onSegmentClick={(index) => (index === undefined) ? onOutsideClick() : onCommentClick(comments[index].userid, comments[index].commentid)}
           onSelect={(start, end) => setSelection({startPos:start, endPos:end})}
           ref={highlightRef}

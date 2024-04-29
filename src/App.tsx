@@ -63,6 +63,7 @@ const App = () => {
       onCommentClick={(userid, commentid) => {setSelectedComment(comments[commentid])}}
       onComment={(start, end) => setComments((prev) => [...prev, {userid : currUserid, commentid : prev.length, seg:[start, end], content:prompt("message")}])}
       onOutsideClick={() => setSelectedComment(null)}
+      highlightedIndex={selectedComment ? selectedComment.commentid : null}
       />
       {selectedComment && <CommentElement comment={selectedComment} colorMap={colorMap} content="Kevin is very smart because of his dedication to visualizing game theory."/>}
       <select value={`${currUserid}`} onChange={(event) => setCurrUserid(parseInt(event.target.value))}>
