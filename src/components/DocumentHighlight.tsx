@@ -1,8 +1,10 @@
 import React, {useEffect, useRef, useState, forwardRef} from 'react'
-import Highlight from "./Highlight";
-import Comment from "./Comment.tsx"
+import Highlight, { Color } from "./Highlight";
+import { HighlightDisjointText } from './HighlightDisjoint.tsx';
 
 import './ContextMenu.css';
+
+const HighlightText = Highlight(HighlightDisjointText)
 
 const ContextMenu = forwardRef(({ xPos, yPos, onComment }, ref) => {
   return (
@@ -12,12 +14,6 @@ const ContextMenu = forwardRef(({ xPos, yPos, onComment }, ref) => {
     </div>
   );
 })
-
-interface Color {
-    red: number;
-    green: number;
-    blue: number
-}
 
 interface MainComment {
   userid: number;
@@ -90,7 +86,7 @@ const DocumentHighlight = ({content, comments, colorMap, onCommentClick, onComme
             onComment={() => {setContextMenuVisible(false); selection && onComment(selection.startPos, selection.endPos)}}
           />
         )}
-        <Highlight 
+        <HighlightText 
           content={content}
           segments={comments.map(({userid, commentid, seg} : MainComment, index) => [seg[0], seg[1], index === highlightedIndex ? {red : 0 + colorMap.get(userid).red * 2 / 3, green : 0 + colorMap.get(userid).green * 2 / 3, blue: colorMap.get(userid).blue * 2 / 3} : colorMap.get(userid)])}
           onSegmentClick={(index) => (index === undefined) ? onOutsideClick() : onCommentClick(comments[index].userid, comments[index].commentid)}
